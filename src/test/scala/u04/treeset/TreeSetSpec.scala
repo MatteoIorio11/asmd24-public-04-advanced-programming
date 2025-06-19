@@ -1,4 +1,6 @@
 package scala.u04.treeset
+import org.scalacheck.{Gen, Prop, Properties}
+
 import java.util
 import java.util.TreeSet
 
@@ -11,8 +13,8 @@ object TreeSetSpec extends Properties("TreeSet") {
     val treeSet = new util.TreeSet[Int]()
     xs.foreach(treeSet.add)
 
-    val scalaList = treeSet.asScala.toList
-    scalaList == scalaList.sorted
+    val scalaList = treeSet.stream().toList
+    scalaList == scalaList.stream().sorted()
   }
 
   property("no duplicates (set semantics)") = Prop.forAll(Gen.listOf(Gen.choose(0, 100))) { xs =>
@@ -33,8 +35,8 @@ object TreeSetSpec extends Properties("TreeSet") {
     val treeSet = new util.TreeSet[Int]()
     xs.foreach(treeSet.add)
 
-    val sorted = treeSet.asScala.toList
-    sorted.head <= sorted.last
+    val sorted = treeSet.stream().toList
+    sorted.get(0) <= sorted.get(sorted.size()-1)
   }
 }
 
