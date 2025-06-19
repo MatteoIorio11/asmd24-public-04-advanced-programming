@@ -5,6 +5,9 @@ import org.scalacheck.Prop._
 import java.util.{ArrayList, List => JList}
 import scala.jdk.CollectionConverters._
 
+/**
+ * Extend to testing Java standard library classes like java.util.ArrayList or java.util.TreeSet
+ */
 object ArrayListSpec extends Properties("ArrayList") {
 
   property("preserves insertion order") = Prop.forAll(Gen.listOf(Gen.alphaStr)) { xs =>
