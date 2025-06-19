@@ -1,7 +1,9 @@
 package scala.u04.point
-import org.scalacheck._
-import org.scalacheck.Prop._
-import java.lang.Math._
+import org.scalacheck.*
+import org.scalacheck.Prop.*
+
+import java.lang.Math.*
+import scala.math.Pi
 
 /**
  * Write a comprehensive ScalaCheck test suite that verifies mathematical properties such as: Distance symmetry (i.e., a.distanceTo(b) == b.distanceTo(a)), Triangle inequality, Rotation
