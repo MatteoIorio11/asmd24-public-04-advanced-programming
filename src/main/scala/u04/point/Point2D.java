@@ -20,7 +20,7 @@ public final class Point2D {
         return this.y;
     }
 
-    public Double distance(final Point2D point) {
+    public Double distanceTo(final Point2D point) {
         return Math.sqrt(Math.pow(this.x - point.getX(), 2) + Math.pow(this.y - point.getY(), 2));
     }
 
