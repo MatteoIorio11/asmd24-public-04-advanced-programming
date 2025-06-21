@@ -26,10 +26,6 @@ abstract class SetADTCheck(name: String) extends Properties(name):
       s <- setGen[Int](i)
     yield s
 
-  property("commutativity of union") =
-    forAll: (s1: Set[Int], s2: Set[Int]) =>
-      (s1 || s2) === (s2 || s1)
-
   /**
     * axioms defining contains based on empty/add:
     * contains(empty, x) = false
@@ -68,6 +64,31 @@ abstract class SetADTCheck(name: String) extends Properties(name):
     &&
       forAll: (s1: Set[Int], x: Int, y: Int) =>
         if (x == y) true else s1.remove(x).add(y) === s1.add(y).remove(x)
+
+  /** Commutative of Union
+   * A ∪ B = B ∪ A
+   */
+  property("commutative of intersection") =
+    forAll: (s1: Set[Int], s2: Set[Int]) =>
+      s1.intersection(s2) === s2.intersection(s1)
+
+
+  /** Commutative of Intersection
+   *  A ∩ B = B ∩ A
+   */
+  property("commutativity of union") =
+    forAll: (s1: Set[Int], s2: Set[Int]) =>
+      (s1 || s2) === (s2 || s1)
+
+  /** Associative property
+   * (A ∪ B) ∪ C = A ∪ (B ∪ C) and (A ∩ B) ∩ C = A ∩ (B ∩ C)
+   */
+  property("associative property") =
+    forAll: (s1: Set[Int], s2: Set[Int], s3: Set[Int]) =>
+      (s1.union(s2)).union(s3) === s1.union(s2.union(s3))
+    &&
+      forAll: (s1: Set[Int], s2: Set[Int], s3: Set[Int]) =>
+        (s1.intersection(s2)).intersection(s3) === s1.intersection(s2.intersection(s3))
 
 
 
