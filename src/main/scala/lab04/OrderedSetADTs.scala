@@ -1,43 +1,34 @@
 package scala.lab04
 
 import u04.datastructures.Sequences
+import u04.datastructures.Sequences.Sequence
+import u04.datastructures.Sequences.Sequence.{Cons, Nil}
 
+import scala.annotation.tailrec
 import scala.collection.immutable.TreeSet
-import scala.lab04.Sequences.Sequence
 import scala.lab04.SetADTs.SetADT
 
 object OrderedSetADTs:
-  trait OrderedSetADT extends SetADT:
-    type Set[A]
-    def empty[A](): Set[A]
-    extension [A: Ordering](s: Set[A])
-      def add(element: A): Set[A]
-      def contains(a: A): Boolean
-      def union(other: Set[A]): Set[A]
-      def intersection(other: Set[A]): Set[A]
-      infix def ||(other: Set[A]): Set[A] = s.union(other)
-      infix def &&(other: Set[A]): Set[A] = s.intersection(other)
-      def remove(a: A): Set[A]
-      def toSequence(): Sequence[A]
-      def size(): Int
-      def ===(other: Set[A]): Boolean
-      override def ===(other: Set[A]): Boolean
+  trait OrderedSetADT[A: Ordering] extends SetADT[A]
 
-  object TreeSetADT extends OrderedSetADT:
-    opaque type Set[A] = TreeSet[A]
-    def empty[A: Ordering](): Set[A] = TreeSet()
+  class TreeSetADT[A: Ordering] extends OrderedSetADT[A]:
+    opaque type Set = TreeSet[A]
 
-    extension [A: Ordering](s: Set[A])
-      def ===(other: Set[A]): Boolean =
-        s.equals(other)
-      override def add(element: A): TreeSet[A] =
-        s + element
-      override def contains(a: A): Boolean =
-        s.
-      override def union(other: TreeSet[A]): TreeSet[A] = ???
-      override def intersection(other: TreeSet[A]): TreeSet[A] = ???
-      override def remove(a: A): TreeSet[A] = ???
-      override def toSequence(): Sequences.Sequence[A] = ???
-      override def size(): Int = ???
-      override def ===(other: TreeSet[A]): Boolean = ???
+    override def empty(): TreeSet[A] = TreeSet()
+
+    extension (s: TreeSet[A])
+      override def add(element: A): TreeSet[A] = s ++ TreeSet(element)
+      override def contains(a: A): Boolean = s.union(TreeSet(a)) === s
+      override def union(other: TreeSet[A]): TreeSet[A] = s | other
+      override def intersection(other: TreeSet[A]): TreeSet[A] = s & other
+      override def remove(a: A): TreeSet[A] = s &~ TreeSet(a)
+      override def toSequence(): Sequences.Sequence[A] =
+        val list = s.toList
+        val size: Int = list.size
+        def buildSequence(index: Int, size: Int): Sequence[A] = index match
+          case size => Nil()
+          case _ => Cons(list(index), buildSequence(index + 1, size))
+        buildSequence(0, size)
+      override def size(): Int = s.toList.size
+      override def ===(other: TreeSet[A]): Boolean = s.equals(other)
 
