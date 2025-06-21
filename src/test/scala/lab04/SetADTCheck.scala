@@ -101,6 +101,38 @@ abstract class SetADTCheck(name: String) extends Properties(name):
       forAll: (s1: Set[Int]) =>
         s1.intersection(s1) === s1
 
+  /** Distribute Law property
+   * A ∩ (B ∪ C)=(A ∩ B) ∪ (A ∩ C) "intersection distributes over union"
+   * A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) "Union distributes over intersection"
+   */
+  property("distribute law") =
+    forAll: (s1: Set[Int], s2: Set[Int], s3: Set[Int]) =>
+      s1.intersection(s2.union(s3)) === s1.intersection(s2).union(s1.intersection(s3))
+    &&
+      forAll: (s1: Set[Int], s2: Set[Int], s3: Set[Int]) =>
+        s1.union(s2.intersection(s3)) === s1.union(s2).intersection(s1.union(s3))
+
+  /** Absorption Law property
+   * A ∪ (A ∩ B) = A
+   * A ∩ (A ∪ B) = A
+   */
+  property("absorption law") =
+    forAll: (s1: Set[Int], s2: Set[Int]) =>
+      s1.union(s1.intersection(s2)) === s1
+    &&
+      forAll: (s1: Set[Int], s2: Set[Int]) =>
+        s1.intersection(s1.union(s2)) === s1
+
+  /** Identity Law
+   * A U 0 == A
+   * A ∩ 0 == 0
+   */
+  property("identity law") =
+    forAll: (s1: Set[Int]) =>
+      s1.union(empty()) === s1
+    &&
+      forAll: (s1: Set[Int]) =>
+        s1.intersection(empty()) === empty()
 
 object BasicSetADTCheck extends SetADTCheck("SequenceBased Set"):
   val setADT: SetADT = BasicSetADT
