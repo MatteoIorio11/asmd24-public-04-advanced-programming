@@ -65,6 +65,7 @@ abstract class SetADTCheck(name: String) extends Properties(name):
       forAll: (s1: Set[Int], x: Int, y: Int) =>
         if (x == y) true else s1.remove(x).add(y) === s1.add(y).remove(x)
 
+  //  <<ADT-VERIFIER>>
   /** Commutative of Union
    * A ∪ B = B ∪ A
    */
@@ -90,6 +91,15 @@ abstract class SetADTCheck(name: String) extends Properties(name):
       forAll: (s1: Set[Int], s2: Set[Int], s3: Set[Int]) =>
         (s1.intersection(s2)).intersection(s3) === s1.intersection(s2.intersection(s3))
 
+  /** Idempotent property
+   * (A ∪ A) = A && (A ∩ A) = A
+   */
+  property("idempotent") =
+    forAll: (s1: Set[Int]) =>
+      s1.union(s1) === s1
+    &&
+      forAll: (s1: Set[Int]) =>
+        s1.intersection(s1) === s1
 
 
 object BasicSetADTCheck extends SetADTCheck("SequenceBased Set"):
