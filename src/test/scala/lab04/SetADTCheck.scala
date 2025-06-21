@@ -43,16 +43,32 @@ abstract class SetADTCheck(name: String) extends Properties(name):
      forAll: (x: Int) =>
         !empty().contains(x)
 
-/**
- * axioms defining union and remove:
- * union(empty, s) = s
- * union(add(x, s2), s) = add(x, union(s2, s)
- * remove(x, empty) = empty
- * remove(x, add(x, s)) = remove(x, s)
- * remove(x, add(y, s)) = add(y, remove(x, s)) if x!=y
- *
- * and so on: write axioms and correspondingly implement checks
- */
+  /** axioms defining union:
+  * union(empty, s) == s
+  * union(add(x, s2), s) = add(x, union(s2, s)
+  */
+  property("axioms for union") =
+    forAll: (s: Set[Int]) =>
+      s.union(empty()) == s
+    &&
+      forAll: (s1: Set[Int], s2: Set[Int], x: Int) =>
+        (s1.add(x)).union(s2) === (s2.add(x)).union(s1)
+
+  /** axioms defining remove:
+   * remove(x, empty) = empty
+   * remove(x, add(x, s)) = remove(x, s)
+   * remove(x, add(y, s)) = add(y, remove(x, s)) if x!=y
+   */
+  property("axioms for remove") =
+    forAll: (x: Int) =>
+       empty().remove(x) === empty()
+    &&
+      forAll: (s1: Set[Int], x: Int) =>
+        s1.remove(x) === s1.add(x).remove(x)
+    &&
+      forAll: (s1: Set[Int], x: Int, y: Int) =>
+        if (x == y) true else s1.remove(x).add(y) === s1.add(y).remove(x)
+
 
 
 object BasicSetADTCheck extends SetADTCheck("SequenceBased Set"):
