@@ -10,7 +10,9 @@ Complete the property-based tests in SetADTCheck by:
 I Adding missing algebraic properties (commutativity, associativity, idempotence) for union and intersection (e.g., A ∪ B = B ∪ A) I Implementing cross-property tests (e.g., relationship between union and intersection) I Ensuring properties reflect the mathematical axioms of sets
 Once tests are complete, implement an alternative version of SetADT using a Tree-based structure
 Adapt the tests minimally to work with your new implementation
+
 ---
+
 The source code regarding this task is located inside:
 * OrderedSetADTs.scala
 * SetADTs.scala
