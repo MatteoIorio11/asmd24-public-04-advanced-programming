@@ -1,4 +1,5 @@
 package scala.u04.treeset
+import org.scalacheck.Prop.{forAll, someFailing}
 import org.scalacheck.{Gen, Prop, Properties}
 
 import java.util
@@ -8,18 +9,22 @@ import java.util.TreeSet
  * Extend to testing Java standard library classes like java.util.ArrayList or java.util.TreeSet
  */
 object TreeSetSpec extends Properties("TreeSet"):
+  val generateContainer: Gen[List[Int]] = Gen.containerOf[List, Int](Gen.choose(-1000, 1000))
+  val generateNonEmptyContainer: Gen[List[Int]] = Gen.nonEmptyContainerOf[List, Int](Gen.choose(-1000, 1000))
+  val generateList: Gen[List[Int]] = Gen.listOf(Gen.choose(0, 100))
   /** Ordered law
    * Every time a new element is pushed inside the TreeSet, the structure is always sorted.
    * add(1) = TreeSet(1)
    * add(2) = TreeSet(1, 2)
    * add(-1) = TreeSet(-1, 1, 2)
    */
-  property("is sorted") = Prop.forAll(Gen.containerOf[List, Int](Gen.choose(-1000, 1000))) { xs =>
+  property("is sorted") = forAll(generateContainer) { xs =>
     val treeSet = new util.TreeSet[Int]()
     xs.foreach(treeSet.add)
 
     val scalaList = treeSet.stream().toList
-    scalaList == scalaList.stream().sorted()
+    val sortedList = scalaList.stream().sorted().toList
+    scalaList == sortedList
   }
 
   /** No Duplicates Law
@@ -28,7 +33,7 @@ object TreeSetSpec extends Properties("TreeSet"):
    * add(2) = TreeSet(1, 2)
    * add(1) = TreeSet(1, 2)
    */
-  property("no duplicates (set semantics)") = Prop.forAll(Gen.listOf(Gen.choose(0, 100))) { xs =>
+  property("no duplicates (set semantics)") = forAll(generateList) { xs =>
     val treeSet = new util.TreeSet[Int]()
     xs.foreach(treeSet.add)
 
@@ -40,7 +45,7 @@ object TreeSetSpec extends Properties("TreeSet"):
    * add(1) = TreeSet(1)
    * add(2) = TreeSet(1, 2)
    */
-  property("contains all inserted elements") = Prop.forAll(Gen.listOf(Gen.choose(0, 100))) { xs =>
+  property("contains all inserted elements") = forAll(generateList) { xs =>
     val treeSet = new util.TreeSet[Int]()
     xs.foreach(treeSet.add)
 
@@ -54,7 +59,7 @@ object TreeSetSpec extends Properties("TreeSet"):
    * add(3) = TreeSet(1, 2, 3)
    * TreeSet.first <= TreeSet.last
    */
-  property("head <= tail for non-empty set") = Prop.forAll(Gen.nonEmptyContainerOf[List, Int](Gen.choose(-1000, 1000))) { xs =>
+  property("head <= tail for non-empty set") = forAll(generateNonEmptyContainer) { xs =>
     val treeSet = new util.TreeSet[Int]()
     xs.foreach(treeSet.add)
 
