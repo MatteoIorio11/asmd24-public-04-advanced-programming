@@ -9,13 +9,14 @@ import scala.jdk.CollectionConverters._
  * Extend to testing Java standard library classes like java.util.ArrayList or java.util.TreeSet
  */
 object ArrayListSpec extends Properties("ArrayList"):
+  val generateList: Gen[List[String]] = Gen.listOf(Gen.alphaStr)
   /** Preserve Insertion Order
    * Every time a new element is pushed inside the ArrayList, the order is preserved.
    * add(1) = ArrayList(1)
    * add(2) = ArrayList(1, 2)
    * add(-1) = ArrayList(1, 2, -1)
    */
-  property("preserves insertion order") = Prop.forAll(Gen.listOf(Gen.alphaStr)) { xs =>
+  property("preserves insertion order") = Prop.forAll(generateList) { xs =>
     val list = new ArrayList[String]()
     xs.foreach(list.add)
 
@@ -29,7 +30,7 @@ object ArrayListSpec extends Properties("ArrayList"):
    * add(-1) = ArrayList(1, 2, -1)
    * add(1) = ArrayList(1, 2, -1, 1)
    */
-  property("size matches number of inserted elements") = Prop.forAll(Gen.listOf(Gen.alphaStr)) { xs =>
+  property("size matches number of inserted elements") = Prop.forAll(generateList) { xs =>
     val list = new ArrayList[String]()
     xs.foreach(list.add)
 
@@ -43,7 +44,7 @@ object ArrayListSpec extends Properties("ArrayList"):
    * add(-1) = ArrayList(1, 2, -1)
    * -1 in ArrayList ? == True
    */
-  property("contains returns true for added elements") = Prop.forAll(Gen.listOf(Gen.alphaStr)) { xs =>
+  property("contains returns true for added elements") = Prop.forAll(generateList) { xs =>
     val list = new ArrayList[String]()
     xs.foreach(list.add)
 
@@ -57,7 +58,7 @@ object ArrayListSpec extends Properties("ArrayList"):
    * add(-1) = ArrayList(1, 2, -1)
    * remove(1, ArrayList) = ArrayList(2, -1)
    */
-  property("removal reduces size by one") = Prop.forAll(Gen.nonEmptyListOf(Gen.alphaStr)) { xs =>
+  property("removal reduces size by one") = Prop.forAll(generateList) { xs =>
     val list = new ArrayList[String]()
     xs.foreach(list.add)
 
@@ -66,4 +67,3 @@ object ArrayListSpec extends Properties("ArrayList"):
 
     removed && list.size() == sizeBefore - 1
   }
-
