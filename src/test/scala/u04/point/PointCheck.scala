@@ -1,7 +1,7 @@
 package scala.u04.point
 import org.scalacheck.*
 import org.scalacheck.Prop.*
-
+import u04.point.Point2D
 import java.lang.Math.*
 import scala.math.Pi
 
@@ -66,7 +66,7 @@ object Point2DSpec extends Properties("Point2D"):
 
   /** Full Rotation Law
    * If we rotate the point of 2pi, the point should be on the same starting point.
-   * distance(a, rotate(a, 2pi)) ≃ 0.0
+   * distance(a, rotate(a, 2pi)) = 0.0
    */
   property("rotate full circle yields same point (approximately)") = Prop.forAll(genPoint2D) { p =>
     val fullCircle = 2 * Pi
