@@ -11,6 +11,7 @@ import scala.math.Pi
  */
 object Point2DGenerators:
   val genDouble: Gen[Double] = Gen.choose(-1e6, 1e6)
+  val genDelta: Gen[Double] = Gen.choose(0.0, 10.0)
 
   val genPoint: Gen[(Double, Double)] = for {
     x <- genDouble
@@ -51,6 +52,21 @@ object Point2DSpec extends Properties("Point2D"):
     ac <= ab + bc + 1e-9 // allow for floating-point slack
   }
 
+  /**
+   * Translate Points law
+   * If we translate the point into a newer position (with dx, dy), the distance from the
+   * original point should be dx and dy
+   * distance(p.x, translate(p, dx, dy).x) = dx
+   * distance(p.y, translate(p, dx, dy).y) = dy
+   */
+  property("translate points") = forAll(genPoint2D, genDelta, genDelta) { (point, dx, dy) =>
+    val translatedPoint = point.translate(dx, dy)
+    val epsilon = 1e-6
+
+    val expectedX = point.getX + dx
+    val expectedY = point.getY + dy
+    (abs(translatedPoint.getX - expectedX) < epsilon && abs(translatedPoint.getY - expectedY) < epsilon)
+  }
 
   /** Rotation Law
    * If we rotate a point, the distance to the origin should be always the same.
