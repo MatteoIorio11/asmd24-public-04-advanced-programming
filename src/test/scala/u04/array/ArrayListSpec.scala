@@ -1,15 +1,18 @@
 package scala.u04.array
 
-import org.scalacheck._
-import org.scalacheck.Prop._
-import java.util.{ArrayList, List => JList}
-import scala.jdk.CollectionConverters._
+import org.scalacheck.*
+import org.scalacheck.Prop.*
+
+import java.util
+import java.util.{ArrayList, List as JList}
+import scala.jdk.CollectionConverters.*
 
 /**
  * Extend to testing Java standard library classes like java.util.ArrayList or java.util.TreeSet
  */
 object ArrayListSpec extends Properties("ArrayList"):
-  val generateList: Gen[List[String]] = Gen.listOf(Gen.alphaStr)
+  val generateList: Gen[List[String]] = Gen.nonEmptyListOf(Gen.alphaStr)
+  val generateValue: Gen[String] = Gen.alphaStr
   /** Preserve Insertion Order
    * Every time a new element is pushed inside the ArrayList, the order is preserved.
    * add(1) = ArrayList(1)
@@ -17,11 +20,34 @@ object ArrayListSpec extends Properties("ArrayList"):
    * add(-1) = ArrayList(1, 2, -1)
    */
   property("preserves insertion order") = Prop.forAll(generateList) { xs =>
-    val list = new ArrayList[String]()
+    val list = new util.ArrayList[String]()
     xs.foreach(list.add)
 
     xs == list.asScala.toList
   }
+
+  /** Insertion Law
+   * head(add(a)) = a
+   */
+  property("insertion law") = forAll(generateValue) { str =>
+    val list = new util.ArrayList[String]()
+    list.add(str)
+    str == list.get(0)
+  }
+
+  /** Is empty after add law
+   * isEmpty(add(a)) = false
+   * isEmpty(empty()) = true
+   */
+  property("empty law") = forAll(generateValue) { str =>
+    val list = new util.ArrayList[String]()
+    list.add(str)
+    !list.isEmpty
+  } && forAll(generateValue){ str =>
+    val list = new util.ArrayList[String]()
+    list.isEmpty
+  }
+
 
   /** Data Store Law
    * Every time an element is pushed inside the ArrayList it is preserved, no matter if it is already stored.
@@ -31,7 +57,7 @@ object ArrayListSpec extends Properties("ArrayList"):
    * add(1) = ArrayList(1, 2, -1, 1)
    */
   property("size matches number of inserted elements") = Prop.forAll(generateList) { xs =>
-    val list = new ArrayList[String]()
+    val list = new util.ArrayList[String]()
     xs.foreach(list.add)
 
     list.size() == xs.size
@@ -45,7 +71,7 @@ object ArrayListSpec extends Properties("ArrayList"):
    * -1 in ArrayList ? == True
    */
   property("contains returns true for added elements") = Prop.forAll(generateList) { xs =>
-    val list = new ArrayList[String]()
+    val list = new util.ArrayList[String]()
     xs.foreach(list.add)
 
     xs.forall(list.contains)
@@ -59,7 +85,7 @@ object ArrayListSpec extends Properties("ArrayList"):
    * remove(1, ArrayList) = ArrayList(2, -1)
    */
   property("removal reduces size by one") = Prop.forAll(generateList) { xs =>
-    val list = new ArrayList[String]()
+    val list = new util.ArrayList[String]()
     xs.foreach(list.add)
 
     val sizeBefore = list.size()
