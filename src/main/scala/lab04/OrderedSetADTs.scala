@@ -25,8 +25,8 @@ object OrderedSetADTs:
       override def toSequence(): Sequences.Sequence[A] =
         val list = s.toList
         val size: Int = list.size
-        def buildSequence(index: Int, size: Int): Sequence[A] = index match
-          case size => Nil()
+        def buildSequence(index: Int, sequenceSize: Int): Sequence[A] = index match
+          case x if x == sequenceSize => Nil()
           case _ => Cons(list(index), buildSequence(index + 1, size))
         buildSequence(0, size)
       override def size(): Int = s.toList.size
