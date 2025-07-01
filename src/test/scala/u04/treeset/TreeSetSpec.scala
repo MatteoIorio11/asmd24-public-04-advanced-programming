@@ -14,9 +14,9 @@ object TreeSetSpec extends Properties("TreeSet"):
   val generateList: Gen[List[Int]] = Gen.listOf(Gen.choose(0, 100))
   /** Ordered law
    * Every time a new element is pushed inside the TreeSet, the structure is always sorted.
-   * add(1) = TreeSet(1)
-   * add(2) = TreeSet(1, 2)
-   * add(-1) = TreeSet(-1, 1, 2)
+   * order(add(1)) = TreeSet(1)
+   * order(add(1), add(2)) = TreeSet(1, 2)
+   * order(add(1), add(2), add(-1)) = TreeSet(-1, 1, 2)
    */
   property("is sorted") = forAll(generateContainer) { xs =>
     val treeSet = new util.TreeSet[Int]()
@@ -65,5 +65,20 @@ object TreeSetSpec extends Properties("TreeSet"):
 
     val sorted = treeSet.stream().toList
     sorted.get(0) <= sorted.get(sorted.size()-1)
+  }
+
+  /** Empty law
+   * isEmpty(add(1)) = false
+   * isEmpty(empty()) = true
+   */
+  property("empty law") = forAll(generateNonEmptyContainer) { xs =>
+    val treeSet = new util.TreeSet[Int]()
+    xs.foreach(treeSet.add)
+
+    !treeSet.isEmpty
+  } && forAll(generateList) { xs =>
+
+    val treeSet = new util.TreeSet[Int]()
+    treeSet.isEmpty
   }
 
