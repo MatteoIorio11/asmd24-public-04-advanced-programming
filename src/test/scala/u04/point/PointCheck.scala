@@ -63,9 +63,9 @@ object Point2DSpec extends Properties("Point2D"):
     val translatedPoint = point.translate(dx, dy)
     val epsilon = 1e-6
 
-    val expectedX = point.getX + dx
-    val expectedY = point.getY + dy
-    (abs(translatedPoint.getX - expectedX) < epsilon && abs(translatedPoint.getY - expectedY) < epsilon)
+    val expectedX = point.x + dx
+    val expectedY = point.y + dy
+    (abs(translatedPoint.x - expectedX) < epsilon && abs(translatedPoint.y - expectedY) < epsilon)
   }
 
   /** Rotation Law
