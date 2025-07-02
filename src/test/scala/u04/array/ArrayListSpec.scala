@@ -19,7 +19,7 @@ object ArrayListSpec extends Properties("ArrayList"):
    * add(2) = ArrayList(1, 2)
    * add(-1) = ArrayList(1, 2, -1)
    */
-  property("preserves insertion order") = Prop.forAll(generateList) { xs =>
+  property("preserves insertion order") = forAll(generateList) { xs =>
     val list = new util.ArrayList[String]()
     xs.foreach(list.add)
 
@@ -35,7 +35,7 @@ object ArrayListSpec extends Properties("ArrayList"):
     str == list.get(0)
   }
 
-  /** Is empty after add law
+  /** Empty law
    * isEmpty(add(a)) = false
    * isEmpty(empty()) = true
    */
@@ -56,7 +56,7 @@ object ArrayListSpec extends Properties("ArrayList"):
    * add(-1) = ArrayList(1, 2, -1)
    * add(1) = ArrayList(1, 2, -1, 1)
    */
-  property("size matches number of inserted elements") = Prop.forAll(generateList) { xs =>
+  property("size matches number of inserted elements") = forAll(generateList) { xs =>
     val list = new util.ArrayList[String]()
     xs.foreach(list.add)
 
@@ -68,9 +68,9 @@ object ArrayListSpec extends Properties("ArrayList"):
    * add(1) = ArrayList(1)
    * add(2) = ArrayList(1, 2)
    * add(-1) = ArrayList(1, 2, -1)
-   * -1 in ArrayList ? == True
+   * contains(-1) == True
    */
-  property("contains returns true for added elements") = Prop.forAll(generateList) { xs =>
+  property("contains returns true for added elements") = forAll(generateList) { xs =>
     val list = new util.ArrayList[String]()
     xs.foreach(list.add)
 
@@ -84,7 +84,7 @@ object ArrayListSpec extends Properties("ArrayList"):
    * add(-1) = ArrayList(1, 2, -1)
    * remove(1, ArrayList) = ArrayList(2, -1)
    */
-  property("removal reduces size by one") = Prop.forAll(generateList) { xs =>
+  property("removal reduces size by one") = forAll(generateList) { xs =>
     val list = new util.ArrayList[String]()
     xs.foreach(list.add)
 
@@ -92,4 +92,16 @@ object ArrayListSpec extends Properties("ArrayList"):
     val removed = list.remove(xs.head) // removes first occurrence
 
     removed && list.size() == sizeBefore - 1
+  }
+
+  /** Tail law
+   * The order of insertion is always preserved, the last add element will be in the last position.
+   * add(a)
+   * tail(add(b)) = b
+   */
+  property("tail law") = forAll(generateValue, generateValue) { (head, tail) =>
+    val list = new util.ArrayList[String]()
+    list.add(head)
+    list.add(tail)
+    tail == list.get(list.size() - 1)
   }

@@ -57,14 +57,12 @@ object TreeSetSpec extends Properties("TreeSet"):
    * add(1) = TreeSet(1)
    * add(2) = TreeSet(1, 2)
    * add(3) = TreeSet(1, 2, 3)
-   * TreeSet.first <= TreeSet.last
+   * first(tree) <= last(tree)
    */
   property("head <= tail for non-empty set") = forAll(generateNonEmptyContainer) { xs =>
     val treeSet = new util.TreeSet[Int]()
     xs.foreach(treeSet.add)
-
-    val sorted = treeSet.stream().toList
-    sorted.get(0) <= sorted.get(sorted.size()-1)
+    treeSet.first() <= treeSet.last()
   }
 
   /** Empty law

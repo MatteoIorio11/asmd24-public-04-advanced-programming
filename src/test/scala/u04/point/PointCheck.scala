@@ -35,7 +35,7 @@ object Point2DSpec extends Properties("Point2D"):
    * distance(a, b) == distance(b, a)
    * distance(c, b) == distance(b, c)
    */
-  property("distance symmetry") = Prop.forAll(genPoint2D, genPoint2D) { (a, b) =>
+  property("distance symmetry") = forAll(genPoint2D, genPoint2D) { (a, b) =>
     val d1 = a.distanceTo(b)
     val d2 = b.distanceTo(a)
     (d1 - d2).abs < 1e-9
@@ -45,7 +45,7 @@ object Point2DSpec extends Properties("Point2D"):
    * <<WIKIPEDIA>>
    * In mathematics, the triangle inequality states that for any triangle, the sum of the lengths of any two sides must be greater than or equal to the length of the remaining side
    */
-  property("triangle inequality") = Prop.forAll(genPoint2D, genPoint2D, genPoint2D) { (a, b, c) =>
+  property("triangle inequality") = forAll(genPoint2D, genPoint2D, genPoint2D) { (a, b, c) =>
     val ab = a.distanceTo(b)
     val bc = b.distanceTo(c)
     val ac = a.distanceTo(c)
@@ -56,8 +56,8 @@ object Point2DSpec extends Properties("Point2D"):
    * Translate Points law
    * If we translate the point into a newer position (with dx, dy), the distance from the
    * original point should be dx and dy
-   * distance(p.x, translate(p, dx, dy).x) = dx
-   * distance(p.y, translate(p, dx, dy).y) = dy
+   * distance(x(p), x(translate(p, dx, dy))) = dx
+   * distance(y(p), y(translate(p, dx, dy))) = dy
    */
   property("translate points") = forAll(genPoint2D, genDelta, genDelta) { (point, dx, dy) =>
     val translatedPoint = point.translate(dx, dy)
@@ -70,9 +70,9 @@ object Point2DSpec extends Properties("Point2D"):
 
   /** Rotation Law
    * If we rotate a point, the distance to the origin should be always the same.
-   * distance(origin, a) == distance(origin, rotate(a, angle))
+   * distance(origin, point) == distance(origin, rotate(point, angle))
    */
-  property("rotation preserves distance to origin") = Prop.forAll(genPoint2D, genAngle) { (p, angle) =>
+  property("rotation preserves distance to origin") = forAll(genPoint2D, genAngle) { (p, angle) =>
     val origin = new Point2D(0, 0)
     val rotated = p.rotate(angle)
     val d1 = p.distanceTo(origin)
@@ -82,9 +82,9 @@ object Point2DSpec extends Properties("Point2D"):
 
   /** Full Rotation Law
    * If we rotate the point of 2pi, the point should be on the same starting point.
-   * distance(a, rotate(a, 2pi)) = 0.0
+   * distance(point, rotate(point, 2pi)) = 0.0
    */
-  property("rotate full circle yields same point (approximately)") = Prop.forAll(genPoint2D) { p =>
+  property("rotate full circle yields same point (approximately)") = forAll(genPoint2D) { p =>
     val fullCircle = 2 * Pi
     val rotated = p.rotate(fullCircle)
     p.distanceTo(rotated) < 1e-9
