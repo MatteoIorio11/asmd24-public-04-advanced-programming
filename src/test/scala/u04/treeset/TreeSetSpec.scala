@@ -83,6 +83,7 @@ object TreeSetSpec extends Properties("TreeSet"):
   }
 
   /** First is always minimum value law
+   * The first value inside the TreeSet is always the minimum value stored.
    * first(add(1)) = 1
    * first(add(2), add(1)) = 1
    */
@@ -91,6 +92,21 @@ object TreeSetSpec extends Properties("TreeSet"):
     list.forall(currentMin => {
       treeSet.add(currentMin)
       treeSet.first() == currentMin
+    })
+  }
+
+  /** Last is always maximum value law
+   * The last value inside the TreeSet is always the maximum value stored.
+   * last(add(1)) = 1
+   * last(add(1, 2)) = 2
+   * last(add(3, 1, 2)) = 3
+   */
+  property("todo") = forAll(generateOrderedList) { list =>
+    val treeSet = new util.TreeSet[Int]()
+    val maxValue = list.head
+    list.forall(currentMin => {
+      treeSet.add(currentMin)
+      treeSet.last() == maxValue
     })
   }
 
