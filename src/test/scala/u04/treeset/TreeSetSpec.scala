@@ -4,6 +4,7 @@ import org.scalacheck.{Gen, Prop, Properties}
 
 import java.util
 import java.util.TreeSet
+import scala.collection.mutable
 
 /**
  * Extend to testing Java standard library classes like java.util.ArrayList or java.util.TreeSet
@@ -12,6 +13,7 @@ object TreeSetSpec extends Properties("TreeSet"):
   val generateContainer: Gen[List[Int]] = Gen.containerOf[List, Int](Gen.choose(-1000, 1000))
   val generateNonEmptyContainer: Gen[List[Int]] = Gen.nonEmptyContainerOf[List, Int](Gen.choose(-1000, 1000))
   val generateList: Gen[List[Int]] = Gen.listOf(Gen.choose(0, 100))
+  val generateOrderedList: Gen[List[Int]] = Gen.const(List(5, 4, 3, 2, 1))
   /** Ordered law
    * Every time a new element is pushed inside the TreeSet, the structure is always sorted.
    * order(add(1)) = TreeSet(1)
@@ -78,5 +80,17 @@ object TreeSetSpec extends Properties("TreeSet"):
 
     val treeSet = new util.TreeSet[Int]()
     treeSet.isEmpty
+  }
+
+  /** First is always minimum value law
+   * first(add(1)) = 1
+   * first(add(2), add(1)) = 1
+   */
+  property("first minimum law") = forAll(generateOrderedList) { list =>
+    val treeSet = new util.TreeSet[Int]()
+    list.forall(currentMin => {
+      treeSet.add(currentMin)
+      treeSet.first() == currentMin
+    })
   }
 
